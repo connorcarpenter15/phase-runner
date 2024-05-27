@@ -1,7 +1,5 @@
 import pygame
-from modules.platforms import Platform, Wall, Portal
-
-# Global constants
+from modules.platforms import Platform, Wall, Portal  # Global constants
 
 # Colors
 BLACK = (0, 0, 0)
@@ -22,7 +20,7 @@ class Level:
     Create a child class for each level with level-specific
     info."""
 
-    def __init__(self, player):
+    def __init__(self, player, platforms, walls, portal_x):
         """Constructor. Pass in a handle to player. Needed for when moving
         platforms collide with the player."""
         self.platform_list = pygame.sprite.Group()
@@ -34,10 +32,26 @@ class Level:
         self.portal_list.add(self.portal)
 
         self.player = player
-        self.status = False
 
         # How far this world has been scrolled left/right
         self.world_shift = 0
+
+        # create obstacles
+        for platform in platforms:
+            block = Platform(platform[0], platform[1])
+            block.rect.x = platform[2]
+            block.rect.y = platform[3]
+            block.player = self.player
+            self.platform_list.add(block)
+
+        for wall in walls:
+            block = Wall(wall[0], wall[1])
+            block.rect.x = wall[2]
+            block.rect.y = wall[3]
+            block.player = self.player
+            self.wall_list.add(block)
+
+        self.portal.rect.x = portal_x
 
     # Update everythign on this level
     def update(self):
@@ -90,9 +104,6 @@ class Level_01(Level):
     def __init__(self, player):
         """Create level 1."""
 
-        # Call the parent constructor
-        super().__init__(player)
-
         # Array with width, height, x, and y of platform
         platforms = [
             [210, 70, 1000, 500],
@@ -101,7 +112,7 @@ class Level_01(Level):
             [210, 70, 1620, 280],
             [150, 70, 1950, 150],
             [300, 50, 2000, 500],
-            [200, 60, 2300, 200],
+            [300, 60, 2200, 200],
             [200, 60, 2600, 350],
         ]
 
@@ -113,23 +124,10 @@ class Level_01(Level):
             [40, 135, 3100, 450],
         ]
 
-        self.portal.rect.x = 4000
-        self.portal.player = player
+        portal_x = 4000
 
-        # Go through the array above and add platforms
-        for platform in platforms:
-            block = Platform(platform[0], platform[1])
-            block.rect.x = platform[2]
-            block.rect.y = platform[3]
-            block.player = self.player
-            self.platform_list.add(block)
-
-        for wall in walls:
-            block = Wall(wall[0], wall[1])
-            block.rect.x = wall[2]
-            block.rect.y = wall[3]
-            block.player = self.player
-            self.wall_list.add(block)
+        # Call the parent constructor
+        super().__init__(player, platforms, walls, portal_x)
 
 
 # Create platforms for the level
@@ -138,9 +136,6 @@ class Level_02(Level):
 
     def __init__(self, player):
         """Create level 2."""
-
-        # Call the parent constructor
-        Level.__init__(self, player)
 
         # width, height, x, y
         platforms = [
@@ -171,23 +166,10 @@ class Level_02(Level):
             [30, 135, 3800, 450],
         ]
 
-        self.portal.rect.x = 4700
-        self.portal.player = player
+        portal_x = 4700
 
-        # Go through the array above and add platforms
-        for platform in platforms:
-            block = Platform(platform[0], platform[1])
-            block.rect.x = platform[2]
-            block.rect.y = platform[3]
-            block.player = self.player
-            self.platform_list.add(block)
-
-        for wall in walls:
-            block = Wall(wall[0], wall[1])
-            block.rect.x = wall[2]
-            block.rect.y = wall[3]
-            block.player = self.player
-            self.wall_list.add(block)
+        # call the parent constructor
+        super().__init__(player, platforms, walls, portal_x)
 
 
 class Level_03(Level):
@@ -196,22 +178,27 @@ class Level_03(Level):
     def __init__(self, player):
         """Create level 3."""
 
-        # Call the parent constructor
-        Level.__init__(self, player)
-
-        # width, height, x, y
+        # Adjusted level to account for ceiling and jump height
         platforms = [
             # player can jump about 150 (starts at 580ish at ground level)
             [200, 30, 2000, 430],
             [200, 30, 2230, 300],
             [100, 50, 2500, 150],
             [200, 30, 2750, 400],
-            [300, 30, 2800, 100],
+            [200, 30, 2900, 250],  # Lowered to prevent ceiling collision
+            [150, 30, 3100, 300],  # Lowered to prevent ceiling collision
+            [200, 30, 3400, 200],  # Adjusted height
+            [100, 30, 3700, 150],  # Adjusted height
+            [250, 30, 3950, 300],  # Lowered to prevent ceiling collision
+            [200, 30, 4300, 250],  # Adjusted height
+            [300, 30, 4600, 200],  # Adjusted height
+            [200, 30, 4900, 250],  # Adjusted height
+            [200, 30, 5200, 300],  # Adjusted height
+            [200, 30, 5400, 350],  # Platform near the portal
         ]
 
         walls = [
             # width, height, x, y
-            # w, h,   x,    y
             [60, 135, 1000, 450],  # steps begin
             [60, 185, 1250, 400],
             [60, 235, 1500, 350],
@@ -221,22 +208,67 @@ class Level_03(Level):
             [30, 400, 2535, 200],
             [200, 155, 2750, 430],
             [40, 100, 3060, 0],
+            [60, 135, 3200, 450],  # Added walls
+            [60, 185, 3500, 400],
+            [60, 235, 3800, 350],
+            [60, 285, 4100, 300],
+            [30, 200, 4400, 0],
+            [30, 300, 4400, 300],
+            [30, 400, 4735, 200],
+            [200, 155, 5000, 430],
+            [40, 300, 5300, 0],
+            [60, 335, 5450, 250],  # Wall near the portal
         ]
 
-        self.portal.rect.x = 4700
-        self.portal.player = player
+        portal_x = 6350
 
-        # Go through the array above and add platforms
-        for platform in platforms:
-            block = Platform(platform[0], platform[1])
-            block.rect.x = platform[2]
-            block.rect.y = platform[3]
-            block.player = self.player
-            self.platform_list.add(block)
+        # call the parent constructor
+        super().__init__(player, platforms, walls, portal_x)
 
-        for wall in walls:
-            block = Wall(wall[0], wall[1])
-            block.rect.x = wall[2]
-            block.rect.y = wall[3]
-            block.player = self.player
-            self.wall_list.add(block)
+
+class Level_04(Level):
+    """Definition for Level4."""
+
+    def __init__(self, player):
+        # width, height, x, y
+        platforms = [
+            [200, 30, 1000, 430],  # Initial platform
+            [200, 30, 1300, 380],  # Higher platform
+            [150, 30, 1600, 330],  # Smaller, higher platform
+            [100, 30, 1850, 280],  # Small platform for precision
+            [200, 30, 2100, 330],  # Descending platform
+            [200, 30, 2400, 280],  # Another descending platform
+            [150, 30, 2700, 230],  # Medium height platform
+            [200, 30, 3000, 180],  # Higher platform
+            [200, 30, 3300, 130],  # Highest platform, requires max jump
+            [250, 30, 3600, 180],  # Descending back down
+            [300, 30, 3900, 230],  # Wider, lower platform
+            [200, 30, 4200, 280],  # More descent
+            [200, 30, 4500, 330],  # Further descent
+            [200, 30, 4800, 380],  # Closer to ground level
+            [300, 30, 5100, 430],  # Almost at ground level
+        ]
+
+        walls = [
+            # width, height, x, y
+            [60, 135, 1200, 450],  # First wall, short
+            [60, 185, 1500, 400],  # Medium height wall
+            [60, 235, 1750, 350],  # Taller wall
+            [60, 285, 2000, 300],  # Tallest wall
+            [30, 200, 2300, 0],  # Vertical obstacle
+            [30, 300, 2300, 300],  # Tall vertical obstacle
+            [30, 400, 2600, 200],  # Tall wall
+            [200, 155, 2900, 430],  # Wide and short wall
+            [40, 100, 3200, 0],  # Narrow wall, low height
+            [60, 335, 3500, 250],  # Medium height wall
+            [30, 385, 3800, 200],  # Narrow, taller wall
+            [60, 435, 4100, 150],  # Tallest wall in level
+            [30, 100, 4400, 0],  # Short wall at top
+            [60, 285, 4700, 300],  # Medium height wall
+            [200, 155, 5000, 430],  # Wide, short wall near end
+        ]
+
+        portal_x = 5900
+
+        # call the parent constructor
+        super().__init__(player, platforms, walls, portal_x)

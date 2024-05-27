@@ -1,8 +1,5 @@
 import pygame
-import time
-
-from pygame.constants import K_RSHIFT
-from modules.levels import BACKGROUND_COLOR, Level_01, Level_02, Level_03
+from modules.levels import BACKGROUND_COLOR, Level_01, Level_02, Level_03, Level_04
 from modules.player import Player
 from modules.screens import (
     draw_menu_screen,
@@ -71,6 +68,7 @@ def input_loop():
     level_list.append(Level_01(player))
     level_list.append(Level_02(player))
     level_list.append(Level_03(player))
+    level_list.append(Level_04(player))
 
     while not game:
         for event in pygame.event.get():
@@ -94,6 +92,10 @@ def input_loop():
                         game = True
                 elif event.key == pygame.K_3:
                     current_level_no = 2
+                    if current_level_no in completed_levels:
+                        game = True
+                elif event.key == pygame.K_4:
+                    current_level_no = 3
                     if current_level_no in completed_levels:
                         game = True
                 elif event.key == pygame.K_h:
@@ -187,7 +189,11 @@ def game_loop(
 
         # Update phase energy
         if player.phase_status:
-            player.phase_energy -= 0.5
+            player.phase_energy -= 0.75
+
+            # check if phase energy is over
+            if player.phase_energy <= 0:
+                player.unphase()
 
         # Update the player.
         active_sprite_list.update()

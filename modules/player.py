@@ -43,7 +43,7 @@ class Player(pygame.sprite.Sprite):
         self.change_y = 0
 
         # List of sprites we can bump against
-        self.level = Level(self)
+        self.level = Level(self, [], [], 0)
 
         # for phaseing
         self.phase_status = False
@@ -95,6 +95,11 @@ class Player(pygame.sprite.Sprite):
                 self.rect.top = block.rect.bottom
 
             # Stop our vertical movement
+            self.change_y = 0
+
+        # check if player hits ceiling
+        if self.rect.top <= 0:
+            self.rect.top = 0
             self.change_y = 0
 
     def calc_grav(self):

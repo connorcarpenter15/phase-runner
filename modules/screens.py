@@ -87,6 +87,12 @@ def draw_menu_screen(screen, completed_levels):
     level_rect = level_text.get_rect(center=(SCREEN_WIDTH / 2, 350))
     screen.blit(level_text, level_rect)
 
+    LEVEL_4_COLOR = TEXT_COLOR if 3 in completed_levels else FADED_TEXT_COLOR
+
+    level_text = text_font.render("4) Level 4", True, LEVEL_4_COLOR)
+    level_rect = level_text.get_rect(center=(SCREEN_WIDTH / 2, 400))
+    screen.blit(level_text, level_rect)
+
     level_text = text_font.render("H) Help", True, TEXT_COLOR)
     level_rect = level_text.get_rect(center=(SCREEN_WIDTH / 2, 450))
     screen.blit(level_text, level_rect)
